@@ -1,4 +1,7 @@
 asgiref==3.8.1
+diploma-frontend @ file:///home/sb/PycharmProjects/shop_django/diploma-frontend/dist/diploma-frontend-0.6.tar.gz#sha256=a845f775108a70aa0b7480bde89f7974738543c202472674391df130a834a005
 Django==5.0.4
+djangorestframework==3.15.1
+pillow==10.3.0
 sqlparse==0.4.4
 typing_extensions==4.11.0

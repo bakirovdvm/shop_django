@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'frontend',
     'api',
+    'my_profile.apps.MyProfileConfig'
 ]
 
 MIDDLEWARE = [
