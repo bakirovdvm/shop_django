@@ -7,10 +7,10 @@ class Avatar(models.Model):
 
     src = models.ImageField(
         upload_to="avatars/user_avatars/",
-        default="avatars/default.png",
+        default="avatars/default.jpg",
         verbose_name="Ссылка",
     )
-    alt = models.CharField(max_length=128, verbose_name="Описание")
+    alt = models.CharField(max_length=128, verbose_name="Описание", null=True, blank=True)
 
     class Meta:
         verbose_name = "Аватар"
