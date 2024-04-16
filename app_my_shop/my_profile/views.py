@@ -2,8 +2,8 @@ from django.shortcuts import render
 from rest_framework import permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .models import Profile
-from .serializers import ProfileSerializer, ChangePasswordSerializer
+from .models import Profile, Avatar
+from .serializers import ProfileSerializer, ChangePasswordSerializer, AvatarSerializer
 
 
 class ProfileView(APIView):
@@ -24,9 +24,10 @@ class ProfileView(APIView):
 
 
 class PasswordView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
     def post(self, request):
-        print(request)
-        print(request.data)
+        # print(request)
+        # print(request.data)
         serializer = ChangePasswordSerializer(data=request.data)
 
         if serializer.is_valid():
@@ -44,3 +45,27 @@ class PasswordView(APIView):
 
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class AvatarView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    def post(self, request):
+        # print(request)
+        # print(request.data)
+        new_avatar = request.FILES.get("avatar")
+
+        if new_avatar:
+            user = request.user
+            profile = Profile.objects.get(user=user)
+            avatar = Avatar.objects.create(src=new_avatar)
+
+            profile.avatar = avatar
+            profile.save()
+
+            return Response(
+                {"message": "Avatar updated successfully."}, status=status.HTTP_200_OK
+            )
+        else:
+            return Response(
+                {"error": "No file was submitted."}, status=status.HTTP_400_BAD_REQUEST
+            )
