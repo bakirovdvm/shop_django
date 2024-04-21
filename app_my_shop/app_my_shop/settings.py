@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'frontend',
     'api',
     'my_profile.apps.MyProfileConfig',
-    'product.apps.ProductConfig'
+    'product.apps.ProductConfig',
+    'catalog.apps.CatalogConfig'
 ]
 
 MIDDLEWARE = [

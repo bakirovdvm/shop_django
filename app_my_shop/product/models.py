@@ -9,7 +9,7 @@ class Tag(models.Model):
 
 
 class Product(models.Model):
-    category = 1
+    category = models.DecimalField(max_digits=8, decimal_places=2, default=0)
     price = models.DecimalField(max_digits=8, decimal_places=2, default=0)
     count = models.IntegerField(default=100)
     date = models.DateTimeField(auto_now_add=True)
@@ -32,7 +32,7 @@ class Product(models.Model):
         return [tag.name for tag in tags]
 
     def get_reviews(self):
-        reviews = Review
+        reviews = ProductReview
         return [review.text for review in reviews]
 
 
