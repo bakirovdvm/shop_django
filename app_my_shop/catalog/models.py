@@ -7,6 +7,11 @@ class Category(models.Model):
     def __str__(self):
         return self.title
 
+    class Meta:
+        verbose_name = 'Категория'
+        verbose_name_plural = 'Категории'
+
+
     def get_image(self):
         images = CategoryImage.objects.filter(category_id=self.pk)
         images_data = dict()
@@ -22,6 +27,10 @@ class Subcategory(models.Model):
     def __str__(self):
         return self.title
 
+    class Meta:
+        verbose_name = 'Под-категория'
+        verbose_name_plural = 'Под-категории'
+
     def get_image(self):
         images = SubCategoryImage.objects.filter(subcategory_id=self.pk)
         images_data = dict()
@@ -35,6 +44,10 @@ class CategoryImage(models.Model):
     src = models.ImageField(upload_to='category/items/')
     alt = models.CharField(max_length=128, null=True, blank=True)
 
+    class Meta:
+        verbose_name = 'Картинка категории'
+        verbose_name_plural = 'Картинки категорий'
+
     def __str__(self):
         return self.src.name
 
@@ -46,3 +59,7 @@ class SubCategoryImage(models.Model):
 
     def __str__(self):
         return self.src.name
+
+    class Meta:
+        verbose_name = 'Картинка под-категории'
+        verbose_name_plural = 'Картинки под-категорий'

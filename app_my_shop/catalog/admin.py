@@ -14,20 +14,6 @@ class SubCategoryImagesInline(admin.StackedInline):
     model = SubCategoryImage
 
 
-@admin.register(CategoryImage)
-class CategoryImageAdmin(admin.ModelAdmin):
-    list_display = "pk", "src", "alt", "category"
-    list_display_links = "pk", "src"
-    search_fields = "pk", "alt"
-
-
-@admin.register(SubCategoryImage)
-class SubCategoryImageAdmin(admin.ModelAdmin):
-    list_display = "pk", "src", "alt", "category"
-    list_display_links = "pk", "src"
-    search_fields = "pk", "alt"
-
-
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
     inlines = [SubCategoryInline, CategoryImagesInline]
@@ -42,6 +28,23 @@ class SubCategoryAdmin(admin.ModelAdmin):
     list_display = 'id', 'title'
     list_display_links = 'id', 'title'
     search_fields = 'id', 'title'
+
+
+@admin.register(CategoryImage)
+class CategoryImageAdmin(admin.ModelAdmin):
+    list_display = "pk", "src", "alt", "category"
+    list_display_links = "pk", "src"
+    search_fields = "pk", "alt"
+
+
+@admin.register(SubCategoryImage)
+class SubCategoryImageAdmin(admin.ModelAdmin):
+    list_display = "pk", "src", "alt", "category"
+    list_display_links = "pk", "src"
+    search_fields = "pk", "alt"
+
+
+
 
 
 

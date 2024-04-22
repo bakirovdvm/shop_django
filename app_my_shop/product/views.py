@@ -14,7 +14,7 @@ class ProductView(APIView):
             product = Product.objects.get(pk=product_id)
             serialiaer = ProductSerializer(product)
             print(serialiaer.data)
-            serialiaer.data['category'] = 1
+            # serialiaer.data['category'] = 1
             print(serialiaer.data)
             return Response(serialiaer.data)
         except Product.DoesNotExist:
