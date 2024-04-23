@@ -10,13 +10,13 @@ class Tag(models.Model):
 
 
 class Product(models.Model):
-    category = models.ForeignKey(Subcategory, on_delete=models.CASCADE, related_name='subCategoryProduct')
+    # category = models.ForeignKey(Subcategory, on_delete=models.CASCADE, related_name='subCategoryProduct')
     price = models.DecimalField(max_digits=8, decimal_places=2, default=0)
     count = models.IntegerField(default=100)
     date = models.DateTimeField(auto_now_add=True)
     title = models.CharField(max_length=200)
-    description = models.TextField()
-    fullDescription = models.TextField()
+    description = models.TextField(null=False, blank=True)
+    fullDescription = models.TextField(null=False, blank=True)
     freeDelivery = models.BooleanField(default=False)
     rating = models.DecimalField(max_digits=3, default=0, decimal_places=2)
     tags = models.ManyToManyField(Tag, related_name='tags')

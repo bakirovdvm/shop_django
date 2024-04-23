@@ -39,7 +39,7 @@ class CategoryImageAdmin(admin.ModelAdmin):
 
 @admin.register(SubCategoryImage)
 class SubCategoryImageAdmin(admin.ModelAdmin):
-    list_display = "pk", "src", "alt", "category"
+    list_display = "pk", "src", "alt", "subcategory"
     list_display_links = "pk", "src"
     search_fields = "pk", "alt"
 
