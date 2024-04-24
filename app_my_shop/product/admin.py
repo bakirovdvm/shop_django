@@ -21,6 +21,7 @@ class ProductAdmin(admin.ModelAdmin):
         'date',
         'count',
         'freeDelivery',
+        'category'
     ]
 
     list_display_links = ['pk', 'title', 'price']
