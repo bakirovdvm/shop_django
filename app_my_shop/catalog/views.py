@@ -32,3 +32,5 @@ class CategoriesView(APIView):
             category_result_list.append(category_dict)
 
         return JsonResponse(category_result_list, safe=False)
+
+
