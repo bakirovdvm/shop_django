@@ -1,3 +1,4 @@
+from django.http import JsonResponse
 from django.shortcuts import render
 from rest_framework.views import APIView
 from .serializers import CategorySerializer, SubCategorySerializer
@@ -7,15 +8,27 @@ from .models import Category, Subcategory
 class CategoriesView(APIView):
     def get(self, request):
         categories = Category.objects.all()
-        category_data = list()
+        category_result_list = list()
+
         for category in categories:
-            print('pk'.upper(), category.pk)
-            print('category'.upper(), category.title)
-            print('image'.upper(), category.get_image())
-
-
-            subcategories = Subcategory.objects.all()
+            # subcategories = category.subcategory.all()
+            subcategories = Subcategory.objects.filter(category=category)
+            subcategories_list = list()
             for subcategory in subcategories:
-                print('pk'.upper(), subcategory.pk)
-                print('category'.upper(), subcategory.title)
-                print('image'.upper(), subcategory.get_image())
+                subcategories_dict = {
+                    'id': subcategory.pk,
+                    'title': subcategory.title,
+                    'image': subcategory.get_image()
+                }
+
+            subcategories_list.append(subcategories_dict)
+
+            category_dict = {
+                'id': category.pk,
+                'title': category.title,
+                'image': category.get_image(),
+                'subcategories': subcategories_list
+            }
+            category_result_list.append(category_dict)
+
+        return JsonResponse(category_result_list, safe=False)
