@@ -11,7 +11,6 @@ class CategoriesView(APIView):
         category_result_list = list()
 
         for category in categories:
-            # subcategories = category.subcategory.all()
             subcategories = Subcategory.objects.filter(category=category)
             subcategories_list = list()
             for subcategory in subcategories:
@@ -29,11 +28,15 @@ class CategoriesView(APIView):
                 'image': category.get_image(),
                 'subcategories': subcategories_list
             }
-            print('category_dict'.upper(), category_dict)
+            # print('category_dict'.upper(), category_dict)
             category_result_list.append(category_dict)
 
-        print('category_result_list'.upper(), category_result_list)
+        # print('category_result_list'.upper(), category_result_list)
 
         return JsonResponse(category_result_list, safe=False)
 
 
+class CatalogView(APIView):
+    def get(self, request):
+        print('request'.upper(), request)
+        print('reques.datat'.upper(), request.data)
