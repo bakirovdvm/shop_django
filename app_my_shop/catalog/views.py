@@ -21,7 +21,7 @@ class CategoriesView(APIView):
                     'image': subcategory.get_image()
                 }
 
-            subcategories_list.append(subcategories_dict)
+                subcategories_list.append(subcategories_dict)
 
             category_dict = {
                 'id': category.pk,
@@ -29,7 +29,10 @@ class CategoriesView(APIView):
                 'image': category.get_image(),
                 'subcategories': subcategories_list
             }
+            print('category_dict'.upper(), category_dict)
             category_result_list.append(category_dict)
+
+        print('category_result_list'.upper(), category_result_list)
 
         return JsonResponse(category_result_list, safe=False)
 
