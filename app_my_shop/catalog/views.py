@@ -38,5 +38,18 @@ class CategoriesView(APIView):
 
 class CatalogView(APIView):
     def get(self, request):
-        print('request'.upper(), request)
+        filter_name = request.query_params.get('filter[name]')
+
+
+        mminpice = request.query_params.get('filter[minPrice]')
+        maxPrice = request.query_params.get('filter[maxPrice]')
+        free_delivery = request.query_params.get('filter[freedelivery]')
+        available = request.query_params.get("filter[available]", True)
+        tags = request.query_params.getlist("tags[]")
+
+        print(mminpice, maxPrice, free_delivery, available)
+
+
+        print('request'.upper(), request.query_params.get('filter[maxPrice]'))
+        print('request'.upper(), request.query_params.get('filter[maxPrice]'))
         print('reques.datat'.upper(), request.data)
