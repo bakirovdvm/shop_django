@@ -1,8 +1,10 @@
 from django.http import JsonResponse
 from django.shortcuts import render
+from rest_framework.response import Response
 from rest_framework.views import APIView
-from .serializers import CategorySerializer, SubCategorySerializer
+from .serializers import CategorySerializer, SubCategorySerializer, ProductSerializer
 from .models import Category, Subcategory
+from product.models import Product
 
 
 class CategoriesView(APIView):
@@ -38,18 +40,28 @@ class CategoriesView(APIView):
 
 class CatalogView(APIView):
     def get(self, request):
+        product = Product.objects
+        serializer = ProductSerializer(product.distinct(), many=True)
+
         filter_name = request.query_params.get('filter[name]')
-
-
         mminpice = request.query_params.get('filter[minPrice]')
         maxPrice = request.query_params.get('filter[maxPrice]')
         free_delivery = request.query_params.get('filter[freedelivery]')
         available = request.query_params.get("filter[available]", True)
         tags = request.query_params.getlist("tags[]")
 
-        print(mminpice, maxPrice, free_delivery, available)
+        # print('serializer'.upper(), serializer)
+        # print(mminpice, maxPrice, free_delivery, available, filter_name)
+        # print('tags'.upper(), tags)
+        # print('request'.upper(), request.query_params.get('filter[maxPrice]'))
+        # print('request'.upper(), request.query_params.get('filter[maxPrice]'))
+        # print('reques.datat'.upper(), request.data)
 
+        # print('items'.upper(), serializer.data)
+        request_data = {
+            'items': serializer.data,
+            'currentPage': request.query_params.get('currentPage'),
+            'lastPage': request.query_params.get('lastPage')
+        }
 
-        print('request'.upper(), request.query_params.get('filter[maxPrice]'))
-        print('request'.upper(), request.query_params.get('filter[maxPrice]'))
-        print('reques.datat'.upper(), request.data)
+        return Response(request_data)
