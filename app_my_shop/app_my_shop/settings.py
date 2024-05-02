@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     'api',
     'my_profile.apps.MyProfileConfig',
     'product.apps.ProductConfig',
-    'catalog.apps.CatalogConfig'
+    'catalog.apps.CatalogConfig',
+    'tags.apps.TagsConfig'
 ]
 
 MIDDLEWARE = [
