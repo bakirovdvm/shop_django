@@ -5,6 +5,8 @@ from rest_framework.views import APIView
 from .serializers import CategorySerializer, SubCategorySerializer, ProductSerializer
 from .models import Category, Subcategory
 from product.models import Product
+from rest_framework.generics import ListAPIView
+from .serializers import BannerSerializer
 
 
 class CategoriesView(APIView):
@@ -50,12 +52,6 @@ class CatalogView(APIView):
         available = request.query_params.get("filter[available]", True)
         tags = request.query_params.getlist("tags[]")
 
-        # print('serializer'.upper(), serializer)
-        # print(mminpice, maxPrice, free_delivery, available, filter_name)
-        # print('tags'.upper(), tags)
-        # print('request'.upper(), request.query_params.get('filter[maxPrice]'))
-        # print('request'.upper(), request.query_params.get('filter[maxPrice]'))
-        # print('reques.datat'.upper(), request.data)
 
         # print('items'.upper(), serializer.data)
         request_data = {
@@ -65,3 +61,19 @@ class CatalogView(APIView):
         }
 
         return Response(request_data)
+
+
+class ProductsPopularView(ListAPIView):
+    def get_queryset(self):
+        return Product.objects.filter(count__gt=0)[:1]
+
+
+class BannerView(ListAPIView):
+    serializer_class = BannerSerializer
+    def get_queryset(self):
+        return Product.objects.filter(count__gt=0).order_by('-rating')[:4]
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
