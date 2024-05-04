@@ -6,7 +6,7 @@ from .serializers import CategorySerializer, SubCategorySerializer, ProductSeria
 from .models import Category, Subcategory
 from product.models import Product
 from rest_framework.generics import ListAPIView
-from .serializers import BannerSerializer
+from .serializers import BannerSerializer, ProductsPopularSerializer
 
 
 class CategoriesView(APIView):
@@ -64,8 +64,31 @@ class CatalogView(APIView):
 
 
 class ProductsPopularView(ListAPIView):
+    serializer_class = BannerSerializer
     def get_queryset(self):
         return Product.objects.filter(count__gt=0)[:1]
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
+
+class ProductsLimitedView(ListAPIView):
+    '''
+    Описывается отображение товаров/продуктов на главной странице сайта
+    в разделе LIMITED EDITION
+    '''
+    serializer_class = BannerSerializer
+
+    def get_queryset(self):
+        return Product.objects.filter(count__gt=0)[:4]
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
 
 
 class BannerView(ListAPIView):

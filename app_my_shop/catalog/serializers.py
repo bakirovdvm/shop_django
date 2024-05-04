@@ -65,7 +65,7 @@ class BannerSerializer(ProductsPopularSerializer):
         return representation
 
 
-class CatalogSerizlizer(ProductsPopularSerializer):
+class CatalogSerializer(ProductsPopularSerializer):
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         tags = Tag.objects.filter(tags__id=instance.id)
