@@ -7,6 +7,7 @@ from .models import Category, Subcategory
 from product.models import Product
 from rest_framework.generics import ListAPIView
 from .serializers import BannerSerializer, ProductsPopularSerializer
+from rest_framework.pagination import PageNumberPagination
 
 
 class CategoriesView(APIView):
@@ -42,8 +43,8 @@ class CategoriesView(APIView):
 
 class CatalogView(APIView):
     def get(self, request):
-        product = Product.objects
-        serializer = ProductSerializer(product.distinct(), many=True)
+        # product = Product.objects
+        # serializer = ProductSerializer(product.distinct(), many=True)
 
         filter_name = request.query_params.get('filter[name]')
         mminpice = request.query_params.get('filter[minPrice]')
@@ -52,6 +53,29 @@ class CatalogView(APIView):
         available = request.query_params.get("filter[available]", True)
         tags = request.query_params.getlist("tags[]")
 
+        print('tags'.upper(), tags)
+
+        queryset = Product.objects
+
+        # if tags:
+        #     queryset = queryset.filter(tags__id__in=tags)
+        #
+        # if free_delivery == "false":
+        #     queryset = queryset.filter(freeDelivery=False)
+        # else:
+        #     queryset = queryset.filter(freeDelivery=True)
+        #
+        # if filter_name:
+        #     queryset = queryset.filter(title__icontains=filter_name)
+        #
+        # if mminpice:
+        #     queryset = queryset.filter(price__gte=mminpice)
+        #
+        # if maxPrice:
+        #     queryset = queryset.filter(price__lte=maxPrice)
+
+        print("queryset", queryset.distinct())
+        serializer = ProductSerializer(queryset.distinct(), many=True)
 
         # print('items'.upper(), serializer.data)
         request_data = {
@@ -90,7 +114,6 @@ class ProductsLimitedView(ListAPIView):
         return Response(serializer.data)
 
 
-
 class BannerView(ListAPIView):
     serializer_class = BannerSerializer
     def get_queryset(self):
@@ -100,3 +123,33 @@ class BannerView(ListAPIView):
         queryset = self.get_queryset()
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
+
+
+class ProductPagination(PageNumberPagination):
+    '''
+    Описывается работа пагинации для страницы Распродажи .../sale/
+
+    '''
+    page_size_query_param = "limit"
+    page_size = 2
+    page_query_param = "currentPage"
+    max_page_size = 100
+
+    def get_paginated_response(self, data) -> Response:
+        modified_data = []
+        # Изменение данных в каждом элементе
+        for item in data:
+            item["images"] = item["product"]["images"]
+            item["title"] = item["product"]["title"]
+            item.pop("product", None)
+            modified_data.append(item)
+
+        return Response(
+            {
+                "items": data,
+                "currentPage": self.page.number,
+                "lastPage": self.page.paginator.num_pages,
+            }
+        )
+
+
