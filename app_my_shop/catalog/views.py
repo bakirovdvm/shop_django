@@ -57,22 +57,22 @@ class CatalogView(APIView):
 
         queryset = Product.objects
 
-        # if tags:
-        #     queryset = queryset.filter(tags__id__in=tags)
-        #
-        # if free_delivery == "false":
-        #     queryset = queryset.filter(freeDelivery=False)
-        # else:
-        #     queryset = queryset.filter(freeDelivery=True)
-        #
-        # if filter_name:
-        #     queryset = queryset.filter(title__icontains=filter_name)
-        #
-        # if mminpice:
-        #     queryset = queryset.filter(price__gte=mminpice)
-        #
-        # if maxPrice:
-        #     queryset = queryset.filter(price__lte=maxPrice)
+        if tags:
+            queryset = queryset.filter(tags__id__in=tags)
+
+        if free_delivery == "false":
+            queryset = queryset.filter(freeDelivery=False)
+        else:
+            queryset = queryset.filter(freeDelivery=True)
+
+        if filter_name:
+            queryset = queryset.filter(title__icontains=filter_name)
+
+        if mminpice:
+            queryset = queryset.filter(price__gte=mminpice)
+
+        if maxPrice:
+            queryset = queryset.filter(price__lte=maxPrice)
 
         print("queryset", queryset.distinct())
         serializer = ProductSerializer(queryset.distinct(), many=True)
