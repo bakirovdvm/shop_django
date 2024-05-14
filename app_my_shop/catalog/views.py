@@ -1,60 +1,224 @@
 from django.http import JsonResponse
 from django.shortcuts import render
 from rest_framework.response import Response
-from rest_framework.views import APIView
-from .serializers import CategorySerializer, SubCategorySerializer, ProductSerializer
-from .models import Category, Subcategory
-from product.models import Product
+# from rest_framework.views import APIView
+# # from .serializers import CategorySerializer, SubCategorySerializer, ProductSerializer
+# from .models import Category, Subcategory
+# from product.models import Product
+# from rest_framework.generics import ListAPIView
+# from .serializers import BannerSerializer, ProductsPopularSerializer
+# from rest_framework.pagination import PageNumberPagination
+#
+#
+# class CategoriesView(APIView):
+#     def get(self, request):
+#         categories = Category.objects.all()
+#         category_result_list = list()
+#
+#         for category in categories:
+#             subcategories = Subcategory.objects.filter(category=category)
+#             subcategories_list = list()
+#             for subcategory in subcategories:
+#                 subcategories_dict = {
+#                     'id': subcategory.pk,
+#                     'title': subcategory.title,
+#                     'image': subcategory.get_image()
+#                 }
+#
+#                 subcategories_list.append(subcategories_dict)
+#
+#             category_dict = {
+#                 'id': category.pk,
+#                 'title': category.title,
+#                 'image': category.get_image(),
+#                 'subcategories': subcategories_list
+#             }
+#             # print('category_dict'.upper(), category_dict)
+#             category_result_list.append(category_dict)
+#
+#         # print('category_result_list'.upper(), category_result_list)
+#
+#         return JsonResponse(category_result_list, safe=False)
+#
+#
+# class CatalogView(APIView):
+#     def get(self, request):
+#         # product = Product.objects
+#         # serializer = ProductSerializer(product.distinct(), many=True)
+#
+#         filter_name = request.query_params.get('filter[name]')
+#         mminpice = request.query_params.get('filter[minPrice]')
+#         maxPrice = request.query_params.get('filter[maxPrice]')
+#         free_delivery = request.query_params.get('filter[freeDelivery]', False)
+#         available = request.query_params.get("filter[available]", True)
+#         tags = request.query_params.getlist("tags[]")
+#
+#         print('tags'.upper(), tags)
+#
+#         queryset = Product.objects
+#
+#         if tags:
+#             queryset = queryset.filter(tags__id__in=tags)
+#
+#         if free_delivery == "false":
+#             queryset = queryset.filter(freeDelivery=False)
+#         else:
+#             queryset = queryset.filter(freeDelivery=True)
+#
+#         if filter_name:
+#             queryset = queryset.filter(title__icontains=filter_name)
+#
+#         if mminpice:
+#             queryset = queryset.filter(price__gte=mminpice)
+#
+#         if maxPrice:
+#             queryset = queryset.filter(price__lte=maxPrice)
+#
+#         print("queryset", queryset.distinct())
+#         serializer = ProductSerializer(queryset.distinct(), many=True)
+#
+#         # print('items'.upper(), serializer.data)
+#         request_data = {
+#             'items': serializer.data,
+#             'currentPage': request.query_params.get('currentPage'),
+#             'lastPage': request.query_params.get('lastPage')
+#         }
+#
+#         return Response(request_data)
+#
+#
+# class ProductsPopularView(ListAPIView):
+#     serializer_class = BannerSerializer
+#     def get_queryset(self):
+#         return Product.objects.filter(count__gt=0)[:1]
+#
+#     def list(self, request, *args, **kwargs):
+#         queryset = self.get_queryset()
+#         serializer = self.get_serializer(queryset, many=True)
+#         return Response(serializer.data)
+#
+#
+# class ProductsLimitedView(ListAPIView):
+#     '''
+#     Описывается отображение товаров/продуктов на главной странице сайта
+#     в разделе LIMITED EDITION
+#     '''
+#     serializer_class = BannerSerializer
+#
+#     def get_queryset(self):
+#         return Product.objects.filter(count__gt=0)[:4]
+#
+#     def list(self, request, *args, **kwargs):
+#         queryset = self.get_queryset()
+#         serializer = self.get_serializer(queryset, many=True)
+#         return Response(serializer.data)
+#
+#
+# class BannerView(ListAPIView):
+#     serializer_class = BannerSerializer
+#     def get_queryset(self):
+#         return Product.objects.filter(count__gt=0).order_by('-rating')[:4]
+#
+#     def list(self, request, *args, **kwargs):
+#         queryset = self.get_queryset()
+#         serializer = self.get_serializer(queryset, many=True)
+#         return Response(serializer.data)
+#
+#
+# class ProductPagination(PageNumberPagination):
+#     '''
+#     Описывается работа пагинации для страницы Распродажи .../sale/
+#
+#     '''
+#     page_size_query_param = "limit"
+#     page_size = 2
+#     page_query_param = "currentPage"
+#     max_page_size = 100
+#
+#     def get_paginated_response(self, data) -> Response:
+#         modified_data = []
+#         # Изменение данных в каждом элементе
+#         for item in data:
+#             item["images"] = item["product"]["images"]
+#             item["title"] = item["product"]["title"]
+#             item.pop("product", None)
+#             modified_data.append(item)
+#
+#         return Response(
+#             {
+#                 "items": data,
+#                 "currentPage": self.page.number,
+#                 "lastPage": self.page.paginator.num_pages,
+#             }
+#         )
+
+
+
+
+from django.http import JsonResponse, HttpResponse
+from django.shortcuts import render
+from rest_framework import permissions, generics
 from rest_framework.generics import ListAPIView
-from .serializers import BannerSerializer, ProductsPopularSerializer
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from product.models import Product, ProductReview #ProductSale
+from product.serializers import ProductSerializer #ProductSaleSerializer
+from .serializers import ProductsPopularSerializer, BannerSerializer, CatalogSerizlizer
+
+from .models import Category, Subcategory, CategoryImage, SubCategoryImage
 
 
 class CategoriesView(APIView):
+    '''
+    Описывается отображение категорий в выпадающем меню сайта, где орображаются
+    категории и под-категории товаров, а также картинки-превьюшкни к ним
+    '''
     def get(self, request):
         categories = Category.objects.all()
-        category_result_list = list()
+        # print('\ncategories'.upper(), categories)
+        categories_data = []
 
         for category in categories:
-            subcategories = Subcategory.objects.filter(category=category)
-            subcategories_list = list()
+            subcategories = category.subcategory.all()
+            # print('\nsubcategories'.upper(), subcategories)
+            subcategories_data = []
+
             for subcategory in subcategories:
-                subcategories_dict = {
-                    'id': subcategory.pk,
-                    'title': subcategory.title,
-                    'image': subcategory.get_image()
+                data_subcat = {
+                    "id": subcategory.pk,
+                    "title": subcategory.title,
+                    "image": subcategory.get_image(),
                 }
+                subcategories_data.append(data_subcat)
+                # print('\nsubcategories_data'.upper(), subcategories_data)
 
-                subcategories_list.append(subcategories_dict)
-
-            category_dict = {
-                'id': category.pk,
-                'title': category.title,
-                'image': category.get_image(),
-                'subcategories': subcategories_list
+            data_category = {
+                "id": category.pk,
+                "title": category.title,
+                "image": category.get_image(),
+                "subcategories": subcategories_data,
             }
-            # print('category_dict'.upper(), category_dict)
-            category_result_list.append(category_dict)
+            categories_data.append(data_category)
 
-        # print('category_result_list'.upper(), category_result_list)
-
-        return JsonResponse(category_result_list, safe=False)
+        return JsonResponse(categories_data, safe=False)
 
 
 class CatalogView(APIView):
+    '''
+    Описывается работа фильтров по имени, минимальной и максимальной цене, способе доставки и
+    популярным тегам товаров
+    '''
     def get(self, request):
-        # product = Product.objects
-        # serializer = ProductSerializer(product.distinct(), many=True)
 
-        filter_name = request.query_params.get('filter[name]')
-        mminpice = request.query_params.get('filter[minPrice]')
-        maxPrice = request.query_params.get('filter[maxPrice]')
-        free_delivery = request.query_params.get('filter[freedelivery]')
+        filter_name = request.query_params.get("filter[name]", "")
+        min_price = request.query_params.get("filter[minPrice]", 0)
+        max_price = request.query_params.get("filter[maxPrice]", 50000)
+        free_delivery = request.query_params.get("filter[freeDelivery]", False)
         available = request.query_params.get("filter[available]", True)
         tags = request.query_params.getlist("tags[]")
-
-        print('tags'.upper(), tags)
-
+        # tags = request.query_params.get('filter[tags]', True)
+        print("tags", tags)
         queryset = Product.objects
 
         if tags:
@@ -68,29 +232,32 @@ class CatalogView(APIView):
         if filter_name:
             queryset = queryset.filter(title__icontains=filter_name)
 
-        if mminpice:
-            queryset = queryset.filter(price__gte=mminpice)
+        if min_price:
+            queryset = queryset.filter(price__gte=min_price)
 
-        if maxPrice:
-            queryset = queryset.filter(price__lte=maxPrice)
+        if max_price:
+            queryset = queryset.filter(price__lte=max_price)
 
         print("queryset", queryset.distinct())
         serializer = ProductSerializer(queryset.distinct(), many=True)
 
-        # print('items'.upper(), serializer.data)
         request_data = {
-            'items': serializer.data,
-            'currentPage': request.query_params.get('currentPage'),
-            'lastPage': request.query_params.get('lastPage')
+            "items": serializer.data,
+            "currentPage": request.query_params.get("currentPage"),
+            "lastPage": request.query_params.get("lastPage"),
         }
-
         return Response(request_data)
 
 
-class ProductsPopularView(ListAPIView):
+class BannerView(ListAPIView):
+    '''
+    Описывается отображение товаров/продуктов в верхней части главной страницы, где по клику
+    можно попасть на страницу с фильтрами, чтобо найти нужный продукт по цене, имени и тэгам
+    '''
     serializer_class = BannerSerializer
+
     def get_queryset(self):
-        return Product.objects.filter(count__gt=0)[:1]
+        return Product.objects.filter(count__gt=0).order_by("-rating")[:4]
 
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset()
@@ -98,7 +265,24 @@ class ProductsPopularView(ListAPIView):
         return Response(serializer.data)
 
 
-class ProductsLimitedView(ListAPIView):
+class ProductsPopularView(ListAPIView):
+    '''
+    Описывается отображение популярных товаров/продуктов на главной странице сайта
+    в разделе POPULAR PRODUCTS
+    '''
+    serializer_class = BannerSerializer
+
+    def get_queryset(self):
+        return Product.objects.filter(count__gt=0)[:1]
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+        # print('serializer.data'.upper(), serializer.data)
+        return Response(serializer.data)
+
+
+class LimitedView(ListAPIView):
     '''
     Описывается отображение товаров/продуктов на главной странице сайта
     в разделе LIMITED EDITION
@@ -107,17 +291,6 @@ class ProductsLimitedView(ListAPIView):
 
     def get_queryset(self):
         return Product.objects.filter(count__gt=0)[:4]
-
-    def list(self, request, *args, **kwargs):
-        queryset = self.get_queryset()
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
-
-
-class BannerView(ListAPIView):
-    serializer_class = BannerSerializer
-    def get_queryset(self):
-        return Product.objects.filter(count__gt=0).order_by('-rating')[:4]
 
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset()
@@ -152,4 +325,18 @@ class ProductPagination(PageNumberPagination):
             }
         )
 
+
+# class SaleView(generics.ListCreateAPIView):
+#     '''
+#     Описывается отображение страницы .../sale/, где находятся продукты/товары,
+#     которые находятся на распродаже.
+#
+#     Распродажа настраивается в соответствующем поле в админке, то есть добавить
+#     товар/продукт на распродажу, можно зайти в админку, затем находим раздел PRODUCT, далее Product sales
+#     и после уже добавляете товар из выпадающего меню всех доступных товаров, устанаваливаете
+#     свою цену, даты распродажы и сохраняете.
+#     '''
+#     queryset = ProductSale.objects.filter(is_on_sale=True)
+#     serializer_class = ProductSaleSerializer
+#     pagination_class = ProductPagination
 
