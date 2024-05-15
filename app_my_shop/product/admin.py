@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Product, ProductImage, ProductReview, ProductSpecifications, Tag
+from .models import Product, ProductImage, ProductReview, ProductSpecifications, Tag, ProductSale
 
 
 class ProductImageInline(admin.StackedInline):
@@ -50,3 +50,10 @@ class ReviewAdmin(admin.ModelAdmin):
 class ReviewAdmin(admin.ModelAdmin):
     list_display = ['pk', 'name', 'value']
     list_display_links = ['pk', 'name', 'value']
+
+
+@admin.register(ProductSale)
+class ProductSaleAdmin(admin.ModelAdmin):
+    list_display = 'pk', 'product', 'salePrice'
+    list_display_links = 'pk', 'product', 'salePrice'
+

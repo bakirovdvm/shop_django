@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Product, Tag, ProductReview, ProductImage, ProductSpecifications
+from .models import Product, Tag, ProductReview, ProductImage, ProductSpecifications, ProductSale
 
 
 class TagSerializer(serializers.ModelSerializer):
@@ -35,3 +35,19 @@ class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = '__all__'
+
+
+class ProductSaleSerializer(serializers.ModelSerializer):
+    product = ProductSerializer
+    class Meta:
+        model = ProductSale
+        fields = '__all__'
+
+    dateFrom = serializers.SerializerMethodField
+    dateTo = serializers.SerializerMethodField
+
+    def get_dateFrom(self, obj):
+        return obj.dateFrom.strftime("%m-%d")
+
+    def get_dateTo(self, obj):
+        return obj.dateTo.strftime("%m-%d")

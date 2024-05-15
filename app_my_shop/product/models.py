@@ -66,3 +66,14 @@ class ProductSpecifications(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='specifications')
     name = models.CharField(max_length=200)
     value = models.TextField()
+
+
+class ProductSale(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='productSale')
+    is_on_sale = models.BooleanField(default=False)
+    salePrice = models.DecimalField(default=0, null=True, blank=True, max_digits=8, decimal_places=2)
+    dateFrom = models.DateTimeField(null=True, blank=True)
+    deteTo = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self):
+        return self.product.title
