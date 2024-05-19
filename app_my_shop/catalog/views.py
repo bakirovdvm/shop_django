@@ -3,7 +3,7 @@
 from django.http import JsonResponse, HttpResponse
 
 from rest_framework import permissions, generics
-from rest_framework.generics import ListAPIView
+from rest_framework.generics import ListAPIView, get_object_or_404
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -156,13 +156,19 @@ class ProductPagination(PageNumberPagination):
     def get_paginated_response(self, data) -> Response:
         modified_data = []
         # Изменение данных в каждом элементе
+        print('data'.upper(), data)
         for item in data:
-            item["images"] = item["product"]["images"]
-            item["title"] = item["product"]["title"]
-            item.pop("product", None)
-            modified_data.append(item)
-
-        return Response(
+            print('111111111111', type(item["product"]), type(item))
+            product_id = item.get("product")
+            if product_id is not None:
+                product = get_object_or_404(Product, pk=product_id)
+                item["images"] = product.get_images()  # Здесь вызываем метод get_images() для получения изображений
+                item["title"] = product.title
+                item.pop("product", None)
+                modified_data.append(item)
+            else:
+                print("Item does not contain 'product' key or 'product' is None.", item)
+            return Response(
             {
                 "items": data,
                 "currentPage": self.page.number,
