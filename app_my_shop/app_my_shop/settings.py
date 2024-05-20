@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'my_profile.apps.MyProfileConfig',
     'product.apps.ProductConfig',
     'catalog.apps.CatalogConfig',
-    'tags.apps.TagsConfig'
+    'tags.apps.TagsConfig',
+    'basket.apps.BasketConfig'
 ]
 
 MIDDLEWARE = [
