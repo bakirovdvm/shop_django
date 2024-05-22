@@ -1,8 +1,10 @@
 from django.shortcuts import render
+from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from .serializers import BasketSerializer, BasketItemSerializer
 from .models import Basket, BasktetItem
+from product.models import Product
 
 
 class BasketView(APIView):
@@ -28,4 +30,16 @@ class BasketView(APIView):
         print("queryset", queryset)
         serializer = BasketItemSerializer(queryset, many=True)
         return Response(serializer.data)
+
+    def post(self, request):
+        product_id = request.data.get('id')
+        quantity = request.data.get('count')
+        print('product_ID', product_id)
+        print('quantity', quantity)
+
+        try:
+            product = Product.objects.get(id=product_id)
+            print(product.title, product.price)
+        except Product.DoesNotExist:
+            return Response({'error': 'product not found'}, status=status.HTTP_404_NOT_FOUND)
 
