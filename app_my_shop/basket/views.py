@@ -43,3 +43,25 @@ class BasketView(APIView):
         except Product.DoesNotExist:
             return Response({'error': 'product not found'}, status=status.HTTP_404_NOT_FOUND)
 
+        if request.user.is_authenticated:
+            basket, created = Basket.objects.get_or_create(user=request.user)
+        else:
+            session_key = request.session.session_key
+            if not session_key:
+                request.session.create()
+                session_key = request.session.session_key
+
+            basket, created = Basket.objects.get_or_create(session_key=session_key)
+
+        basket_item, created = BasktetItem.objects.get_or_create(basket=basket, product=product)
+        basket_item.quantity += int(quantity)
+        basket_item.save()
+        serializer = BasketItemSerializer(basket_item)
+
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+
+
+
+
