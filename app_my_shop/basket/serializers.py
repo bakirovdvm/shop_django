@@ -10,7 +10,7 @@ class BasketItemSerializer(serializers.Serializer):
 
     def to_representation(self, instance):
         data = ProductSerializer(instance.product).data
-        data['quantity'] = instance.quantity
+        data['count'] = instance.quantity
         print(data)
         return data
 
