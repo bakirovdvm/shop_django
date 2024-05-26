@@ -6,12 +6,14 @@ from product.serializers import ProductSerializer
 class BasketItemSerializer(serializers.Serializer):
     class Meta:
         model = BasktetItem
-        fields = 'product', 'quantity'
+        fields = '__all__'
 
     def to_representation(self, instance):
+        print('instance'.upper(), instance)
+        print('instance.product'.upper(), instance.product)
         data = ProductSerializer(instance.product).data
         data['count'] = instance.quantity
-        print(data)
+        # print('data-basketitemserializer'.upper(), data)
         return data
 
 

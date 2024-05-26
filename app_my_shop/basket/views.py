@@ -17,7 +17,7 @@ class BasketView(APIView):
             queryset = BasktetItem.objects.filter(basket__user=request.user)
             serializer = BasketItemSerializer(instance=queryset, many=True)
 
-            print('serializer.data'.upper(), serializer.data)
+            # print('serializer.data'.upper(), serializer.data)
             return Response(serializer.data)
 
         else:
@@ -91,6 +91,6 @@ class BasketView(APIView):
         else:
             basket_item.delete()
 
-        serializer = BasketItemSerializer(BasketSerializer)
+        serializer = BasketItemSerializer(basket_item)
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
