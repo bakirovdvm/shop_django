@@ -9,8 +9,8 @@ class BasketItemSerializer(serializers.Serializer):
         fields = '__all__'
 
     def to_representation(self, instance):
-        print('instance'.upper(), instance)
-        print('instance.product'.upper(), instance.product)
+        # print('instance'.upper(), instance)
+        # print('instance.product'.upper(), instance.product)
         data = ProductSerializer(instance.product).data
         data['count'] = instance.quantity
         # print('data-basketitemserializer'.upper(), data)
