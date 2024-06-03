@@ -1,5 +1,6 @@
 from django.http import JsonResponse
 from django.shortcuts import render
+from rest_framework.response import Response
 from rest_framework.views import APIView
 from .serializers import OrderSerializer
 from .models import Order
@@ -57,15 +58,27 @@ class OrderView(APIView):
 
 
 
-
-
-
-
 class OrderDetailView(APIView):
-    def post(self, request, order_id):
-        order = Order.objects.get(pk=order_id)
+    def get(self, request, order_id):
+        try:
+            order = Order.objects.get(pk=order_id)
+        except Order.DoesNotExist:
+            return JsonResponse({'error': 'Order not found'}, status=404)
+
+        try:
+            profile = Profile.objects.get(fullName=order.fullName)
+        except profile.DoesNotExist:
+            session_key = request.session.session_key
+            print('session_key'.upper(), session_key)
+
+            response_data = {'orderId': order.id}
+
+            return Response(response_data, status=200)
+
         serializer = OrderSerializer(order)
-        print('SERIALIZER GET ORDER', serializer.data)
+        # print('SERIALIZER GET ORDER', serializer.data)
+
+        return JsonResponse(serializer.data)
 
 
 

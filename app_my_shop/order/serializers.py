@@ -47,7 +47,8 @@ class OrderSerializer(serializers.ModelSerializer):
                 }
                 for item in products
             ],
-
         }
 
-        print('dataaa'.upper(), data)
+        # print('dataaa'.upper(), data)
+
+        return data
