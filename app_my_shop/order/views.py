@@ -6,6 +6,7 @@ from .serializers import OrderSerializer
 from .models import Order
 from my_profile.models import Profile
 from basket.models import Basket, BasktetItem
+from rest_framework.generics import get_object_or_404
 
 
 class OrderView(APIView):
@@ -80,5 +81,27 @@ class OrderDetailView(APIView):
 
         return JsonResponse(serializer.data)
 
+    def post(self, request, order_id):
+        order = get_object_or_404(Order, id=order_id)
+        print('order_POST', order)
+        print('request_POST', request)
+        print('request_POST', request.data)
 
+        order = get_object_or_404(Order, id=order_id)
 
+        delivery_type = request.data["deliveryType"]
+        payment_type = request.data["paymentType"]
+        city = request.data["city"]
+        address = request.data["address"]
+        status_order = "in process"
+
+        order.deliveryType = delivery_type
+        order.paymentType = payment_type
+        order.city = city
+        order.address = address
+        order.status = status_order
+        order.save()
+
+        response_data = {"orderId": order.id}
+
+        return Response(response_data, status=200)
