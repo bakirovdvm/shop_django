@@ -7,6 +7,9 @@ from .serializers import ProfileSerializer, ChangePasswordSerializer, AvatarSeri
 
 
 class ProfileView(APIView):
+    '''
+    Описывается отображение профиля
+    '''
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
@@ -24,10 +27,11 @@ class ProfileView(APIView):
 
 
 class PasswordView(APIView):
+    '''
+    Описывается процедура смены пароля
+    '''
     permission_classes = [permissions.IsAuthenticated]
     def post(self, request):
-        # print(request)
-        # print(request.data)
         serializer = ChangePasswordSerializer(data=request.data)
 
         if serializer.is_valid():
@@ -48,10 +52,11 @@ class PasswordView(APIView):
 
 
 class AvatarView(APIView):
+    '''
+    описывается процедура смены аватарки
+    '''
     permission_classes = [permissions.IsAuthenticated]
     def post(self, request):
-        # print(request)
-        # print(request.data)
         new_avatar = request.FILES.get("avatar")
 
         if new_avatar:

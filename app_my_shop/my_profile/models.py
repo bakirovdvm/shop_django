@@ -3,7 +3,9 @@ from django.db import models
 
 
 class Avatar(models.Model):
-    """Модель для хранения аватара пользователя"""
+    """
+    Модель для хранения аватара пользователя
+    """
 
     src = models.ImageField(
         upload_to="avatars/user_avatars/",
@@ -18,6 +20,9 @@ class Avatar(models.Model):
 
 
 class Profile(models.Model):
+    '''
+    Модель профиля пользователя
+    '''
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
     fullName = models.CharField(max_length=128, verbose_name="Полное имя")
     email = models.EmailField(max_length=80, default='')

@@ -2,6 +2,12 @@ from django.db import models
 
 
 class Category(models.Model):
+    '''
+    Описыватся родительская модель категории товара, куда будут относится под-категории
+
+    Имеется поле названия категории
+    '''
+
     title = models.CharField(max_length=200, null=False, default='CategoryName')
 
     def __str__(self):
@@ -23,6 +29,12 @@ class Category(models.Model):
 
 
 class Subcategory(models.Model):
+    '''
+    Описыватся модель под-категории товара, куда будут относится товары/продукты
+
+    Имеется поле названия под-категории и ссылка на родительскую модель категории
+    '''
+
     title = models.CharField(max_length=200, null=False, default='SubCategoryName')
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='subcategory')
 
@@ -44,6 +56,10 @@ class Subcategory(models.Model):
 
 
 class CategoryImage(models.Model):
+    '''
+    Описывается модель картинок превьюшек для родительской категории
+    '''
+
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='images')
     src = models.ImageField(upload_to='category/items/')
     alt = models.CharField(max_length=128, null=True, blank=True)
@@ -57,6 +73,10 @@ class CategoryImage(models.Model):
 
 
 class SubCategoryImage(models.Model):
+    '''
+    Описывается модель картинок превьюшек для под-категории
+    '''
+
     subcategory = models.ForeignKey(Subcategory, on_delete=models.CASCADE, related_name='images')
     src = models.ImageField(upload_to='subcategory/items/')
     alt = models.CharField(max_length=128, null=True, blank=True)

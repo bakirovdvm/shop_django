@@ -10,8 +10,12 @@ from .serializers import BasketItemSerializer
 
 class BasketView(APIView):
     def get(self, request):
-        print('OLLLA', request)
-        print('OLLLA', request.data)
+        '''
+        Приложение корзины.
+
+        В методе GET мы получаем данные о продукте
+        '''
+
         if request.user.is_authenticated:
             print('USER', request.user)
             queryset = BasktetItem.objects.filter(basket__user=request.user)
@@ -33,14 +37,21 @@ class BasketView(APIView):
         return Response(serializer.data)
 
     def post(self, request):
+        '''
+        Перейдя на страницу товара, выбираем количество,
+        которое хотим купить и нажимаем на кнопку "ADD TO CARD"
+        :param request: получаем ID продукта и количество продукта для заказа
+        :return:
+        '''
+
         product_id = request.data.get('id')
         quantity = request.data.get('count')
-        print('product_ID', product_id)
-        print('quantity', quantity)
+        # print('product_ID', product_id)
+        # print('quantity', quantity)
 
         try:
             product = Product.objects.get(id=product_id)
-            print(product.title, product.price)
+            # print(product.title, product.price)
         except Product.DoesNotExist:
             return Response({'error': 'product not found'}, status=status.HTTP_404_NOT_FOUND)
 
@@ -62,6 +73,12 @@ class BasketView(APIView):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def delete(self, request):
+        '''
+        Удаление продукта из корзины
+        :param request: получаем ID продукта и количество продукта
+        :return:
+        '''
+
         product_id = request.data.get('id')
         quantity = request.data.get('count')
 
