@@ -10,6 +10,10 @@ from .models import Product
 
 
 class ProductView(APIView):
+    '''
+    Описывается отображение продукта на странице
+    '''
+
     def get(self, request, product_id):
         try:
             product = Product.objects.get(pk=product_id)
@@ -23,6 +27,10 @@ class ProductView(APIView):
 
 
 class ProductReview(APIView):
+    '''
+    Описывается отображение и добавление отзыва к продукту
+    '''
+
     def get(self, request, id):
         reviews = ProductReview.objects.filter(pk=id)
         serializer = ProductReviewSerializer(reviews, many=True)

@@ -10,6 +10,10 @@ from rest_framework.generics import get_object_or_404
 
 
 class OrderView(APIView):
+    '''
+    Описывается раобта заказа для неавторизованного и авторизованного пользователя
+    и как заполняется продуктами корзина
+    '''
     # def get(self, request):
     #     print(request)
     #     print(request.data)
@@ -60,6 +64,10 @@ class OrderView(APIView):
 
 
 class OrderDetailView(APIView):
+    '''
+    Описывается процедура оформления заказа, то есть заполнение информации о покупателе
+    (город, адрес и способы доставки, способ платежа и тд)
+    '''
     def get(self, request, order_id):
         try:
             order = Order.objects.get(pk=order_id)

@@ -9,6 +9,11 @@ from product.models import Product
 
 
 class PaymentView(APIView):
+    '''
+    Описывается процедура онлайн оплаты заказа,
+    и затем опустошение корзины после успешной оплаты
+    '''
+
     def post(self, request, id):
         print(request.data)
         order = Order.objects.get(id=id)

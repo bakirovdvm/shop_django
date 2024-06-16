@@ -3,6 +3,10 @@ from catalog.models import Subcategory
 
 
 class Tag(models.Model):
+    '''
+    Описывается модель Тэгов
+    '''
+
     name = models.CharField(max_length=200)
 
     def __str__(self):
@@ -10,6 +14,32 @@ class Tag(models.Model):
 
 
 class Product(models.Model):
+    '''
+    Описывается модель продукта
+
+    Имеются поля:
+
+    - категория товара
+
+    - цена товара
+
+    - количество товара
+
+    - дата создания товара
+
+    - название товара
+
+    - короткое описание
+
+    - полное описание
+
+    - матод доставки (бесплатно или платно)
+
+    - тэги товара
+
+    - рейтинг товара
+    '''
+
     category = models.ForeignKey(Subcategory, on_delete=models.CASCADE, related_name='subCategoryProduct')
     price = models.DecimalField(max_digits=8, decimal_places=2, default=0)
     count = models.IntegerField(default=100)
@@ -45,6 +75,10 @@ def product_images_directory_path(instance: 'ProductImage', filename: str) -> st
 
 
 class ProductImage(models.Model):
+    '''
+    Описывается модель картинок для продукта
+    '''
+
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='images')
     src = models.ImageField(upload_to=product_images_directory_path)
     alt = models.CharField(max_length=200, null=False, blank=True, default='image')
@@ -54,6 +88,10 @@ class ProductImage(models.Model):
 
 
 class ProductReview(models.Model):
+    '''
+    Описывается модель отзывов к продутку
+    '''
+
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='reviews')
     author = models.CharField(max_length=200)
     email = models.EmailField(max_length=100)
@@ -63,12 +101,20 @@ class ProductReview(models.Model):
 
 
 class ProductSpecifications(models.Model):
+    '''
+    Описывается модель спецификаций продукта
+    '''
+
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='specifications')
     name = models.CharField(max_length=200)
     value = models.TextField()
 
 
 class ProductSale(models.Model):
+    '''
+    Описывается модель распродажи продуктов
+    '''
+
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='productSale')
     is_on_sale = models.BooleanField(default=False)
     salePrice = models.DecimalField(default=0, null=True, blank=True, max_digits=8, decimal_places=2)

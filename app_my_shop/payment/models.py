@@ -3,6 +3,12 @@ from order.models import Order
 
 
 class Payment(models.Model):
+    '''
+    Описывается модель онлайн оплаты.
+
+    Имеются поля с данными платжной карточки (номер, имя, дата истечения и тд)
+    '''
+
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='payment_order')
     card_number = models.IntegerField()
     card_name = models.CharField(max_length=80)

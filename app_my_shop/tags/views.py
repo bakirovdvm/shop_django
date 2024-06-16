@@ -6,6 +6,11 @@ from .serializers import TagSerializer
 
 
 class TagsView(APIView):
+    '''
+    Описывается работа облака тэгов, то есть при нажатии мышкой на какойнибудь тэг,
+    передается Id и Имя тэга
+    '''
+
     def get(self, request):
         tags = Tag.objects.all()
         serializer = TagSerializer(tags, many=True)
